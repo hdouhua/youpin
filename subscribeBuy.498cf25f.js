@@ -1,3 +1,7 @@
+/**
+ * origin: https://m.xiaomiyoupin.com/app/shop/ugg/js/subscribeBuy.498cf25f.js
+ */
+
 (function (t) {
     function e(e) {
         for (var a, r, s = e[0], c = e[1], u = e[2], d = 0, f = []; d < s.length; d++)

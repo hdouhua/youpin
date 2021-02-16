@@ -1,4 +1,8 @@
-(function () {
+/**
+ * origin: https://account.xiaomi.com/static/res/4aed9b2/account-static/html/login/dist/v3/login-en.js
+ */
+
+ (function () {
     function l(r, h) {
         var p;
         if (r) {
