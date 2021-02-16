@@ -1825,7 +1825,7 @@
                         }
                         ))
 
-                        //TODO: hack - enable redo-spike within 100-130 seconds
+                        //TODO: hack - enable redo-spike within 100-130 milliseconds
                         setTimeout(function () {
                             t.spikeFlag = !1;
                         }, 100 + Math.ceil(Math.random() * 30));
@@ -1870,7 +1870,7 @@
 
                         //TODO: hack - enable buy button xxx milliseconds prior to origin time
                         console.log('actStatusInfo:', t.actConfig.actStatusInfo)
-                        const xxx = 1000 * 30
+                        const xxx = 1000 * 0.8
                         e.spikeLeftTime -= xxx
                         e.spikeTime -= xxx
                         e.orderEndTime = e.spikeTime - 30 * 60 * 1000 // 30 minutes prior to spikeTime
