@@ -84,8 +84,7 @@ async function createPage() {
     if (url.includes('subscribeBuy.498cf25f.js')
       || url.includes('youpin-lib10.min.js')
       || url.includes('login-en.js')
-    ) {
-      // interception
+    ) { // interception
 
       let filename = new URL(url).pathname.split('/').pop();
       request.respond({
@@ -96,8 +95,7 @@ async function createPage() {
 
     } else if (url.startsWith('https://m.xiaomiyoupin.com/app/stat/visitv2')
       || url.startsWith('https://stat.youpin.mi.com')
-    ) {
-      // ignore stats
+    ) { // ignore stats
 
       request.respond({
         status: 200,
@@ -121,13 +119,14 @@ async function createPage() {
     if (url.startsWith('https://account.xiaomi.com/pass/serviceLogin')) {
       // special handler: login -- just run once when userDataDir enabled
 
+      // avoid dead loop
       const referer = request.headers().referer;
       if (referer && referer.startsWith('https://account.xiaomi.com/pass/serviceLogin')) {
         return;
       }
 
       await page.waitForSelector(LOGIN_BUTTON, { visible: true });
-      // await page.waitFor(3 * 1000);
+      // await page.waitForTimeout(3 * 1000);
 
       await page.type(LOGIN_USERNAME, CurrentConfig.credential.user)
       // alternative:
@@ -139,7 +138,7 @@ async function createPage() {
       // ...
 
       // 2) login type: credential
-      await page.type(LOGIN_PWD, CurrentConfig.credential.user)
+      await page.type(LOGIN_PWD, CurrentConfig.credential.pass)
 
       // submit login form
       await page.click(LOGIN_BUTTON)
@@ -173,7 +172,7 @@ async function createPage() {
 
   /**
    * spike: spikeUrl will be generated randomly, 
-   * such as /mtop/act/orderspike/ekips or mtop/act/orderspike/spike
+   * such as /mtop/act/orderspike/ekips or /mtop/act/orderspike/spike
    * 
    * POST https://m.xiaomiyoupin.com/mtop/act/orderspike/spike?_=1613381965283
    * payload: [{},{"actId":"601f5ab4d6018000014e66ef"}]
