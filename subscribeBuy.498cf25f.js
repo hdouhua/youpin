@@ -1247,17 +1247,19 @@
             , G = W
             , z = Object(y["a"])(G, H, R, !1, null, "38d623cd", null)
             , J = z.exports
+            , xxxTried = 0
             , q = function () {
                 var t = this
                     , e = t.$createElement
                     , n = t._self._c || e;
 
                 //TODO: hack - automatically doSpike
-                if (t.status === 4) {
-                    console.log('do spike')
+                if (t.status === 4 && xxxTried < 10) {
                     // setTimeout(function () {
+                    //     console.log('do spike', xxxTried);
+                    //     xxxTried++;
                     //     t.doSpike();
-                    // }, 50)
+                    // }, 0)
                 }
 
                 return t.status > 0 && t.status < 20 ? n("div", {
