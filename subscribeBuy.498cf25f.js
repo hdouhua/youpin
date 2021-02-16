@@ -1247,19 +1247,19 @@
             , G = W
             , z = Object(y["a"])(G, H, R, !1, null, "38d623cd", null)
             , J = z.exports
-            , xxxTried = 0
             , q = function () {
                 var t = this
                     , e = t.$createElement
                     , n = t._self._c || e;
 
                 //TODO: hack - automatically doSpike
-                if (t.status === 4 && xxxTried < 10) {
-                    // setTimeout(function () {
-                    //     console.log('do spike', xxxTried);
-                    //     xxxTried++;
-                    //     t.doSpike();
-                    // }, 0)
+                if (t.status === 4) {
+                    if (typeof t.xxxTried === 'undefined') t.xxxTried = 0;
+                    if (t.xxxTried < 10)
+                        setTimeout(function () {
+                            console.log('calling doSpike', t.xxxTried);
+                            t.doSpike();
+                        }, 0);
                 }
 
                 return t.status > 0 && t.status < 20 ? n("div", {
@@ -1773,6 +1773,11 @@
                     },
                     postSpike: function () {
                         var t = this;
+
+                        //TODO: hack
+                        console.log('doing spike at:', new Date().getTime())
+                        t.xxxTried++;
+
                         this.$api.doSpike(this.actId, this.actConfig.userStatusInfo.spikeUrl, this.actConfig.userStatusInfo.token).then((function (e) {
                             if (e.success)
                                 t.changeActConfig({
@@ -1795,7 +1800,8 @@
                                 // t.changeActConfig(n),
                                 // t.setFailCache()
                             }
-                            t.spikeFlag = !1
+                            //TODO: hack
+                            //t.spikeFlag = !1
                         }
                         )).catch((function (e) {
                             e && 500 === e.code ? setTimeout((function () {
@@ -1818,6 +1824,11 @@
                                     t.setFailCache())
                         }
                         ))
+
+                        //TODO: hack - enable redo-spike within 100-130 seconds
+                        setTimeout(function () {
+                            t.spikeFlag = !1;
+                        }, 100 + Math.ceil(Math.random() * 30));
                     },
                     setFailCache: function () {
                         try {
