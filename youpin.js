@@ -6,8 +6,14 @@
  */
 
 const fs = require("fs"),
+  path = require("path"),
+  { EOL } = require("os"),
   puppeteer = require("puppeteer"),
   iPhoneX = puppeteer.devices["iPhone X"];
+
+// for debug only
+const ENABLE_LOG = false;
+const ENABLE_LOG_TO_FILE = true;
 
 // config
 const CONFIG = [
@@ -28,6 +34,7 @@ const CONFIG = [
 ];
 const CurrentConfig = CONFIG[process.argv.length > 2 ? process.argv[2] : 0];
 // console.log(CurrentConfig)
+const LogFilename = path.resolve(CurrentConfig.userDataDir, new Date().toISOString() + '.txt');
 
 // selector for html DOM elements
 const HOME_SUBSCRIBEBUY_BUTTON = '[module_key="image_link_map"]>div>:nth-child(3)'
@@ -53,6 +60,7 @@ async function createPage() {
     ignoreHTTPSErrors: true,
     userDataDir: CurrentConfig.userDataDir,
     executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    //devtools: true,
     args: [
       '--disable-setuid-sandbox',
       '--disable-web-security',
@@ -62,20 +70,73 @@ async function createPage() {
     ],
   }).catch(() => browser.close);
 
-  return await browser.newPage();
+  const page = await browser.newPage();
+  await page.emulate(iPhoneX);
+
+  // emulate app
+  page.evaluateOnNewDocument(() => {
+    Object.defineProperty(navigator, 'platform', { get: () => 'iPhone' })
+  });
+  await page.setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 14_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MIOTWeex/2.0.5 (YouPin;4.10.1;)  MIOTStore/20191212 (YouPin;4.10.1;) APP/com.xiaomi.youpin APPV/4.10.1 iosPassportSDK/3.9.6 iOS/14.4/XiaoMi/MiuiBrowser/4.3/Shop/ios/iPhone10,1/4.5.41');
+  await page.setExtraHTTPHeaders({
+    'X-User-Agent': 'channel/youpin platform/youpin.ios'
+  });
+
+  return page;
 }
 
 //https://m.xiaomiyoupin.com/app/shop/ugg/subscribeBuy.html?actId=601f5ab4d6018000014e66ef&spmref=M_H5.2112.97890.2.11462387
 (async () => {
 
   const page = await createPage();
-  await page.emulate(iPhoneX);
 
   // event handlers
 
   // for debug only:
   page.on('requestfailed', request => {
     console.log(request.url(), '==>', request.failure().errorText);
+  });
+  page.on('requestfinished', async (request) => {
+
+    if (!(ENABLE_LOG || ENABLE_LOG_TO_FILE)) {
+      return;
+    }
+
+    const url = request.url();
+    if (url.startsWith('https://m.xiaomiyoupin.com/mtop/act/orderspike')) {
+
+      const response = await request.response();
+
+      const resHeaders = response.headers();
+      let resBody;
+      if (request.redirectChain().length === 0) {
+        resBody = await response.text();
+      }
+
+      const info = {
+        url,
+        reqHeaders: request.headers(),
+        reqPostData: request.postData(),
+        resHeaders,
+        resBody,
+      }
+
+      if (ENABLE_LOG) {
+        console.log(info);
+      }
+
+      if (ENABLE_LOG_TO_FILE) {
+        const stream = fs.createWriteStream(LogFilename, { 'flags': 'a' });
+        stream.once('open', function (fd) {
+          stream.write(JSON.stringify(info, null, 2));
+          stream.write(EOL)
+          stream.write('--------------------');
+          stream.write(EOL);
+        });
+      }
+
+    }
+
   });
 
   await page.setRequestInterception(true);
