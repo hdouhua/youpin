@@ -22,7 +22,7 @@ const CONFIG = [
       user: '15019872900',
       pass: '',
     },
-    userDataDir: "/Users/user/Documents/lab/youpin/userdata-1",
+    userDataDir: "D:\\temp\\youpin\\userdata-1",
   },
   {
     credential: {
@@ -34,7 +34,7 @@ const CONFIG = [
 ];
 const CurrentConfig = CONFIG[process.argv.length > 2 ? process.argv[2] : 0];
 // console.log(CurrentConfig)
-const LogFilename = path.resolve(CurrentConfig.userDataDir, new Date().toISOString() + '.txt');
+const LogFilename = path.resolve(CurrentConfig.userDataDir, new Date().getTime() + '.txt');
 
 // selector for html DOM elements
 const HOME_SUBSCRIBEBUY_BUTTON = '[module_key="image_link_map"]>div>:nth-child(3)'
@@ -59,7 +59,8 @@ async function createPage() {
     headless: false,
     ignoreHTTPSErrors: true,
     userDataDir: CurrentConfig.userDataDir,
-    executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    // executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    executablePath: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
     //devtools: true,
     args: [
       '--disable-setuid-sandbox',
@@ -132,6 +133,7 @@ async function createPage() {
           stream.write(EOL)
           stream.write('--------------------');
           stream.write(EOL);
+          stream.end();
         });
       }
 
