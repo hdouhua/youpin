@@ -29,7 +29,7 @@ const CONFIG = [
       user: '18628333600',
       pass: '',
     },
-    userDataDir: "/Users/yl.huang/Documents/lab/youpin/userdata-2",
+    userDataDir: "/Users/user/Documents/lab/youpin/userdata-2",
   },
 ];
 const CurrentConfig = CONFIG[process.argv.length > 2 ? process.argv[2] : 0];
