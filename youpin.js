@@ -29,7 +29,7 @@ const CONFIG = [
       user: '18628333600',
       pass: '',
     },
-    userDataDir: "/Users/user/Documents/lab/youpin/userdata-2",
+    userDataDir: "/Users/yl.huang/Documents/lab/youpin/userdata-2",
   },
 ];
 const CurrentConfig = CONFIG[process.argv.length > 2 ? process.argv[2] : 0];
@@ -59,8 +59,8 @@ async function createPage() {
     headless: false,
     ignoreHTTPSErrors: true,
     userDataDir: CurrentConfig.userDataDir,
-    // executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-    executablePath: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+    executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    // executablePath: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
     //devtools: true,
     args: [
       '--disable-setuid-sandbox',
@@ -144,7 +144,7 @@ async function createPage() {
   await page.setRequestInterception(true);
   page.on('request', request => {
     let url = request.url();
-    if (url.includes('subscribeBuy.498cf25f.js')
+    if (url.includes('subscribeBuy.deb71068')
       || url.includes('youpin-lib10.min.js')
       || url.includes('login-en.js')
     ) { // interception
