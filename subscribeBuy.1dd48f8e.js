@@ -405,6 +405,16 @@
     },
     "3fd9": function (t, e, n) { },
     4538: function (t, e) {
+        //TODO: hack for app
+        console.debug('origin:', window.miHomeLib.ua)
+        let newX = window.miHomeLib.ua
+        newX.chrome = false
+        newX.pc = false
+        newX.app = true
+        newX.iOS = true
+        newX.iOS_app = true
+        console.debug('updated:', newX)
+
         t.exports = window.miHomeLib
     },
     "52b8": function (t, e, n) {
@@ -1241,6 +1251,17 @@
                 var t = this
                     , e = t.$createElement
                     , n = t._self._c || e;
+
+                //TODO: hack - automatically doSpike
+                if (t.status === 4) {
+                    if (typeof t.xxxTried === 'undefined') t.xxxTried = 0;
+                    if (t.xxxTried < 10)
+                        setTimeout(function () {
+                            console.log('calling doSpike', t.xxxTried);
+                            t.doSpike();
+                        }, 0);
+                }
+
                 return t.status > 0 && t.status < 20 ? n("div", {
                     staticClass: "module-product-main pretty-module",
                     class: "status-" + t.status,
@@ -1760,6 +1781,11 @@
                     },
                     postSpike: function () {
                         var t = this;
+
+                        //TODO: hack
+                        console.log('doing spike at:', new Date().getTime())
+                        t.xxxTried++;
+
                         this.$api.doSpike(this.actId, this.actConfig.userStatusInfo.spikeUrl, this.actConfig.userStatusInfo.token, this.clickCount).then((function (e) {
                             if (e.success)
                                 t.changeActConfig({
@@ -1770,18 +1796,20 @@
                                     }
                                 });
                             else {
-                                var n = {
-                                    userStatusInfo: {
-                                        ordered: !0,
-                                        spiked: !0,
-                                        win: !1
-                                    }
-                                };
-                                e.spikeAwardConfigBO && 4 === e.spikeAwardConfigBO.awardType && (n.userStatusInfo.redPackageValue = e.spikeAwardConfigBO.value),
-                                    t.changeActConfig(n),
-                                    t.setFailCache()
+                                //TODO: hack - comment out these lines to allow re-submit
+                                // var n = {
+                                //     userStatusInfo: {
+                                //         ordered: !0,
+                                //         spiked: !0,
+                                //         win: !1
+                                //     }
+                                // };
+                                // e.spikeAwardConfigBO && 4 === e.spikeAwardConfigBO.awardType && (n.userStatusInfo.redPackageValue = e.spikeAwardConfigBO.value),
+                                //     t.changeActConfig(n),
+                                //     t.setFailCache()
                             }
-                            t.spikeFlag = !1
+                            //TODO: hack
+                            // t.spikeFlag = !1
                         }
                         )).catch((function (e) {
                             e && 500 === e.code ? setTimeout((function () {
@@ -1804,6 +1832,11 @@
                                     t.setFailCache())
                         }
                         ))
+
+                        //TODO: hack - enable redo-spike within 100-130 milliseconds
+                        setTimeout(function () {
+                            t.spikeFlag = !1;
+                        }, 100 + Math.ceil(Math.random() * 30));
                     },
                     setFailCache: function () {
                         try {
@@ -1848,6 +1881,15 @@
                     var t = this;
                     this.$on("startInterVal", (function () {
                         var e = t.actConfig && t.actConfig.actStatusInfo;
+
+                        //TODO: hack - enable buy button xxx milliseconds prior to origin time
+                        console.log('actStatusInfo:', t.actConfig.actStatusInfo)
+                        const xxx = 1000 * 0.8
+                        e.spikeLeftTime -= xxx
+                        e.spikeTime -= xxx
+                        e.orderEndTime = e.spikeTime - 30 * 60 * 1000 // 30 minutes prior to spikeTime
+                        e.orderEndLeftTime = e.orderEndTime - Date.now()
+
                         Q(e.orderStartLeftTime, t.startOrderTimer, 300, (function () {
                             t.changeActConfig({
                                 actStatusInfo: {
@@ -3597,6 +3639,10 @@
                     e.actStatusInfo && e.actStatusInfo.spikeLeftTime >= 0 && (e.actStatusInfo.spikeLeftTime += 500),
                         t.actConfig = e,
                         t.getActTs = Date.now();
+
+                    //TODO: hack
+                    console.log('userStatusInfo:', t.actConfig.userStatusInfo)
+
                     try {
                         "1" === localStorage.getItem("spike_mt_fail_" + t.actId) && (t.actConfig.userStatusInfo.spiked = !0,
                             t.actConfig.userStatusInfo.win = !1,

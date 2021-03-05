@@ -144,7 +144,7 @@ async function createPage() {
   await page.setRequestInterception(true);
   page.on('request', request => {
     let url = request.url();
-    if (url.includes('subscribeBuy.deb71068')
+    if (url.includes('subscribeBuy.1dd48f8e.js')
       || url.includes('youpin-lib10.min.js')
       || url.includes('login-en.js')
     ) { // interception
